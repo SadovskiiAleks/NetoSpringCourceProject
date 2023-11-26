@@ -1,6 +1,7 @@
 package com.example.courseprojectnetology.controller;
 
 import com.example.courseprojectnetology.models.FilePlace;
+import com.example.courseprojectnetology.models.NewFileName;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public interface FileLoadController {
     @PutMapping("/file")
     ResponseEntity<String> editFileName(
             @RequestParam("name") String fileName,
-            @RequestBody String newFileName
+            @RequestBody NewFileName newFileName
     );
 
     @GetMapping("/list")

@@ -1,6 +1,7 @@
 package com.example.courseprojectnetology.controller;
 
 import com.example.courseprojectnetology.models.FilePlace;
+import com.example.courseprojectnetology.models.NewFileName;
 import com.example.courseprojectnetology.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -35,7 +36,7 @@ public class FileLoadControllerImp implements FileLoadController {
     }
 
     @Override
-    public ResponseEntity<String> editFileName(String fileName, String newFileName) {
+    public ResponseEntity<String> editFileName(String fileName, NewFileName newFileName) {
         ResponseEntity<String> responseEntity = fileService.editFileName(fileName,newFileName);
         return null;
     }

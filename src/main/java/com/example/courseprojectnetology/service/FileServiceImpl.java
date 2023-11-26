@@ -1,6 +1,7 @@
 package com.example.courseprojectnetology.service;
 
 import com.example.courseprojectnetology.models.FilePlace;
+import com.example.courseprojectnetology.models.NewFileName;
 import com.example.courseprojectnetology.repository.FileRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,16 +138,15 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> editFileName(String name, String newFileName) {
+    public ResponseEntity<String> editFileName(String name, NewFileName newFileName) {
         FilePlace filePlace = fileRepository.findByFileName(name);
         Path source = Paths.get(filePlace.getFileWayOf());
-
         try {
-            Files.move(source, source.resolveSibling(name + filePlace.getFormatFile()));
+            Files.move(source, source.resolveSibling(newFileName.getNewFileName() + filePlace.getFormatFile()));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        filePlace.setFileName(name);
+        filePlace.setFileName(newFileName.getNewFileName());
         filePlace.setFileWayOf(source.toString());
         fileRepository.save(filePlace);
         return ResponseEntity.ok().build();

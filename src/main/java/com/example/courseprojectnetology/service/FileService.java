@@ -1,6 +1,7 @@
 package com.example.courseprojectnetology.service;
 
 import com.example.courseprojectnetology.models.FilePlace;
+import com.example.courseprojectnetology.models.NewFileName;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public interface FileService {
 
     ResponseEntity<Resource> downloadFileFromCloud(String name);
 
-    ResponseEntity<String> editFileName(String name,String newFileName);
+    ResponseEntity<String> editFileName(String name, NewFileName newFileName);
 
     ResponseEntity<List<FilePlace>> getAllFiles();
 
