@@ -1,6 +1,7 @@
 package com.example.courseprojectnetology.service;
 
-import com.example.courseprojectnetology.exception.errors.ErrorUploadFile;
+import com.example.courseprojectnetology.exception.errors.InternetServerError;
+import com.example.courseprojectnetology.exception.errors.BadRequestError;
 import com.example.courseprojectnetology.models.FilePlace;
 import com.example.courseprojectnetology.models.NewFileName;
 import com.example.courseprojectnetology.repository.FileRepository;
@@ -50,7 +51,7 @@ public class FileServiceImpl implements FileService {
         try {
             if (multipartFile.isEmpty()) {
 //*Ошибка загрузки файла
-                throw new ErrorUploadFile("Error input data", number);
+                throw new BadRequestError("Error input data", number);
                 //throw new StorageException("Failed to store empty file.");
             }
             Path test = Paths.get(fileWayOfSafeFile);
@@ -88,11 +89,16 @@ public class FileServiceImpl implements FileService {
     @Transactional
     public ResponseEntity<String> deleteFile(String name) {
         FilePlace filePlace = fileRepository.findByFileName(name);
+        if (filePlace == null) {
+            int number = 1;
+            throw new BadRequestError("Error input data", number);
+        }
         String fileWay = filePlace.getFileWayOf();
         try {
             Files.delete(Paths.get(fileWay));
         } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
+            int number = 1;
+            throw new InternetServerError("Error delete file", number);
         }
         long del = fileRepository.deleteFilePlaceByFileName(name);
         return ResponseEntity.ok().build();
@@ -117,7 +123,10 @@ public class FileServiceImpl implements FileService {
 //        } catch (IOException e){
 //
 //        }
-
+        if (filePlace == null) {
+            int number = 1;
+            throw new BadRequestError("Error input data", number);
+        }
 
         try {
             //Path file = root.resolve(name);
@@ -131,10 +140,13 @@ public class FileServiceImpl implements FileService {
                         .body(resource);
             } else {
                 //throw new RuntimeException("Could not read the file!");
+                int number = 1;
+                throw new InternetServerError("Error upload file", number);
             }
         } catch (MalformedURLException e) {
             //throw new RuntimeException("Error: " + e.getMessage());
         }
+
 
         return ResponseEntity.badRequest().build();
     }
