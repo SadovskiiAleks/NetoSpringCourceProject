@@ -1,5 +1,6 @@
 package com.example.courseprojectnetology.service;
 
+import com.example.courseprojectnetology.exception.errors.ErrorUploadFile;
 import com.example.courseprojectnetology.models.FilePlace;
 import com.example.courseprojectnetology.models.NewFileName;
 import com.example.courseprojectnetology.repository.FileRepository;
@@ -45,9 +46,11 @@ public class FileServiceImpl implements FileService {
         filePlace.setFileName(name);
         filePlace.setFormatFile(formatFile);
         filePlace.setFileWayOf(fileWayOfSafeFile);
-
+        int number = 1;
         try {
             if (multipartFile.isEmpty()) {
+//*Ошибка загрузки файла
+                throw new ErrorUploadFile("Error input data", number);
                 //throw new StorageException("Failed to store empty file.");
             }
             Path test = Paths.get(fileWayOfSafeFile);
