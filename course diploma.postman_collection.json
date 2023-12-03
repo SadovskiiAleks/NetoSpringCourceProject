@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "08ade172-607d-4f06-8b25-1e12686bc368",
+		"name": "course diploma",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26650924",
+		"_collection_link": "https://grey-meteor-12099.postman.co/workspace/Team-Workspace~6ec7947a-492a-4ebe-8952-a2c79db89b44/collection/26650924-08ade172-607d-4f06-8b25-1e12686bc368?action=share&source=collection_link&creator=26650924"
+	},
+	"item": [
+		{
+			"name": "Exeption",
+			"item": [
+				{
+					"name": "http://localhost:4040/cloud/file?name=fileNemaTest Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "name",
+								"value": "",
+								"description": "Пробный файл",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:4040/cloud/file?name=fileNemaTest3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4040",
+							"path": [
+								"cloud",
+								"file"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "fileNemaTest3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:4040/cloud/file Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4040/cloud/file?name=test1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4040",
+							"path": [
+								"cloud",
+								"file"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "test1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:4040/cloud/file Copy 2",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4040/cloud/file?name=fileNemaTest",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4040",
+							"path": [
+								"cloud",
+								"file"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "fileNemaTest"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "security",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"login\":\"root\",\r\n\"password\":\"root\"}"
+						},
+						"url": "http://localhost:4040/cloud/login"
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:4040/cloud/list"
+					},
+					"response": []
+				},
+				{
+					"name": "New Request Copy",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"login\":\"root\",\r\n\"password\":\"root\"}"
+						},
+						"url": "http://localhost:4040/cloud/login"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "http://localhost:4040/cloud/file?name=fileNemaTest",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "name",
+						"value": "",
+						"description": "Пробный файл",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "content",
+							"type": "file",
+							"src": "/C:/Users/aleks/Downloads/Снимок экрана 2023-11-26 174131.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:4040/cloud/file?name=fileNemaTest13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"cloud",
+						"file"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "fileNemaTest13"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4040/cloud/file?name=fileNemaTest3",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4040/cloud/file?name=fileNemaTest2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"cloud",
+						"file"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "fileNemaTest2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4040/cloud/file",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4040/cloud/file?name=fileNemaTest1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"cloud",
+						"file"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "fileNemaTest1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4040/cloud/file?name=fileNemaTest3",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"newFileName\":\"fileTest11\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/cloud/file?name=fileNemaTest11",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"cloud",
+						"file"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "fileNemaTest11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4040/cloud/list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:4040/cloud/list"
+			},
+			"response": []
+		}
+	]
+}
