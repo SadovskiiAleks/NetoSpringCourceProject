@@ -1,5 +1,6 @@
 package com.example.courseprojectnetology.security.jwtMy.token;
 
+import com.example.courseprojectnetology.exception.errors.BadRequestError;
 import com.example.courseprojectnetology.models.Role;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
@@ -90,9 +91,8 @@ public class JWTTokenProvider {
             }
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            //
-
-            throw new JwtException("JWT token is expired or invalid");
+            int number = 1;
+            throw new BadRequestError("Bad credentials", number);
         }
     }
 
