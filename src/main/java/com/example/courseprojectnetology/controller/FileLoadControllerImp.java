@@ -12,10 +12,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-//@RequiredArgsConstructor
 public class FileLoadControllerImp implements FileLoadController {
     @Autowired
     FileService fileService;
+
 
     @Override
     public ResponseEntity<String> uploadFileToServer(String fileName, MultipartFile multipartFile) {
@@ -37,7 +37,7 @@ public class FileLoadControllerImp implements FileLoadController {
 
     @Override
     public ResponseEntity<String> editFileName(String fileName, NewFileName newFileName) {
-        ResponseEntity<String> responseEntity = fileService.editFileName(fileName,newFileName);
+        ResponseEntity<String> responseEntity = fileService.editFileName(fileName, newFileName);
         return null;
     }
 

@@ -2,8 +2,8 @@ package com.example.courseprojectnetology.exception.errors;
 
 import com.example.courseprojectnetology.exception.BaseApplicationException;
 
-public class InternetServerError extends BaseApplicationException {
-    public InternetServerError(String msg, int id) {
+public class InternalServerError extends BaseApplicationException {
+    public InternalServerError(String msg, int id) {
         super(msg, id);
     }
 

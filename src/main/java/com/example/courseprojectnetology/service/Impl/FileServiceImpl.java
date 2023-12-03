@@ -1,10 +1,11 @@
-package com.example.courseprojectnetology.service;
+package com.example.courseprojectnetology.service.Impl;
 
-import com.example.courseprojectnetology.exception.errors.InternetServerError;
 import com.example.courseprojectnetology.exception.errors.BadRequestError;
+import com.example.courseprojectnetology.exception.errors.InternalServerError;
 import com.example.courseprojectnetology.models.FilePlace;
 import com.example.courseprojectnetology.models.NewFileName;
 import com.example.courseprojectnetology.repository.FileRepository;
+import com.example.courseprojectnetology.service.FileService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -24,7 +25,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Service
-//@RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
 
 
@@ -52,7 +52,6 @@ public class FileServiceImpl implements FileService {
             if (multipartFile.isEmpty()) {
 //*Ошибка загрузки файла
                 throw new BadRequestError("Error input data", number);
-                //throw new StorageException("Failed to store empty file.");
             }
             Path test = Paths.get(fileWayOfSafeFile);
 
@@ -60,12 +59,6 @@ public class FileServiceImpl implements FileService {
                             fileWayOfSafeFile)
                     .normalize().toAbsolutePath();
 
-            if (!destinationFile.getParent().equals(test.toAbsolutePath())) {
-                // This is a security check
-//                throw new StorageException(
-//                        "Cannot store file outside current directory.");
-
-            }
             if (Files.exists(test)) {
                 return ResponseEntity.badRequest().body("Файл уже создан");
             }
@@ -74,7 +67,6 @@ public class FileServiceImpl implements FileService {
                         StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            //throw new StorageException("Failed to store file.", e);
         }
         fileRepository.save(filePlace);
         return ResponseEntity.ok().build();
@@ -98,7 +90,7 @@ public class FileServiceImpl implements FileService {
             Files.delete(Paths.get(fileWay));
         } catch (IOException e) {
             int number = 1;
-            throw new InternetServerError("Error delete file", number);
+            throw new InternalServerError("Error delete file", number);
         }
         long del = fileRepository.deleteFilePlaceByFileName(name);
         return ResponseEntity.ok().build();
@@ -108,28 +100,12 @@ public class FileServiceImpl implements FileService {
     @Transactional
     public ResponseEntity<Resource> downloadFileFromCloud(String name) {
         FilePlace filePlace = fileRepository.findByFileName(name);
-//        public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-//            FileDB fileDB = storageService.getFile(id);
-//
-//            return ResponseEntity.ok()
-//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
-//                    .body(fileDB.getData());
-//        }
-//        try {
-//
-//            byte[] file = Files.readAllBytes(Paths.get(filePlace.getFileWayOf()));
-//            return ResponseEntity.ok().headers()
-//                    .body(file);
-//        } catch (IOException e){
-//
-//        }
         if (filePlace == null) {
             int number = 1;
             throw new BadRequestError("Error input data", number);
         }
 
         try {
-            //Path file = root.resolve(name);
             Path file = Paths.get(filePlace.getFileWayOf());
             Resource resource = new UrlResource(file.toUri());
 
@@ -139,15 +115,11 @@ public class FileServiceImpl implements FileService {
                                 "attachment; filename=\"" + filePlace.getFileName() + filePlace.getFormatFile() + "\"")
                         .body(resource);
             } else {
-                //throw new RuntimeException("Could not read the file!");
                 int number = 1;
-                throw new InternetServerError("Error upload file", number);
+                throw new InternalServerError("Error upload file", number);
             }
         } catch (MalformedURLException e) {
-            //throw new RuntimeException("Error: " + e.getMessage());
         }
-
-
         return ResponseEntity.badRequest().build();
     }
 
@@ -155,11 +127,16 @@ public class FileServiceImpl implements FileService {
     @Transactional
     public ResponseEntity<String> editFileName(String name, NewFileName newFileName) {
         FilePlace filePlace = fileRepository.findByFileName(name);
+        if (filePlace == null) {
+            int number = 1;
+            throw new BadRequestError("Error input data", number);
+        }
         Path source = Paths.get(filePlace.getFileWayOf());
         try {
             Files.move(source, source.resolveSibling(newFileName.getNewFileName() + filePlace.getFormatFile()));
         } catch (IOException e) {
-            e.printStackTrace();
+            int number = 1;
+            throw new InternalServerError("Error upload file", number);
         }
         filePlace.setFileName(newFileName.getNewFileName());
         filePlace.setFileWayOf(source.toString());
@@ -170,6 +147,11 @@ public class FileServiceImpl implements FileService {
     @Override
     public ResponseEntity<List<FilePlace>> getAllFiles() {
         List<FilePlace> filePlaces = fileRepository.findAll();
+        if (filePlaces.isEmpty()) {
+            int number = 1;
+            throw new BadRequestError("Error input data", number);
+        }
+        //throw new InternetServerError("Error upload file", number);
         return ResponseEntity.ok()
                 .body(filePlaces);
     }

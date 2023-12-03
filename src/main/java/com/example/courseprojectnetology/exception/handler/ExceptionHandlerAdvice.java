@@ -1,7 +1,7 @@
 package com.example.courseprojectnetology.exception.handler;
 
 import com.example.courseprojectnetology.exception.dto.ErrorDTO;
-import com.example.courseprojectnetology.exception.errors.InternetServerError;
+import com.example.courseprojectnetology.exception.errors.InternalServerError;
 import com.example.courseprojectnetology.exception.errors.BadRequestError;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,16 +22,16 @@ public class ExceptionHandlerAdvice {
         return new ErrorDTO(massage, id);
     }
 
-    @ExceptionHandler(InternetServerError.class)
-    public ResponseEntity<ErrorDTO> errorInputData(InternetServerError internetServerError) {
-        ErrorDTO errorDto = createErrorDto(internetServerError);
+    @ExceptionHandler(InternalServerError.class)
+    public ResponseEntity<ErrorDTO> errorInputData(InternalServerError internalServerError) {
+        ErrorDTO errorDto = createErrorDto(internalServerError);
         return ResponseEntity.internalServerError()
                 .body(errorDto);
     }
 
-    public ErrorDTO createErrorDto(InternetServerError internetServerError) {
-        String massage = internetServerError.getMessage();
-        int id = internetServerError.getId();
+    public ErrorDTO createErrorDto(InternalServerError internalServerError) {
+        String massage = internalServerError.getMessage();
+        int id = internalServerError.getId();
         return new ErrorDTO(massage, id);
     }
 
