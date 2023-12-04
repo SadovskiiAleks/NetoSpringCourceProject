@@ -1,5 +1,6 @@
 package com.example.courseprojectnetology.service.Impl;
 
+import com.example.courseprojectnetology.dto.FileDTO;
 import com.example.courseprojectnetology.exception.errors.BadRequestError;
 import com.example.courseprojectnetology.exception.errors.InternalServerError;
 import com.example.courseprojectnetology.models.FilePlace;
@@ -8,16 +9,14 @@ import com.example.courseprojectnetology.repository.FileRepository;
 import com.example.courseprojectnetology.service.FileService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,15 +26,16 @@ import java.util.List;
 @Service
 public class FileServiceImpl implements FileService {
 
+    @Value("${my.property.startfileway}")
+    private String fileWay;
 
-    String fileWay = "O:\\Личные файлы\\Netology\\fileBaseTest";
     @Autowired
     private FileRepository fileRepository;
 
     @Override
     @Transactional
-    public ResponseEntity<String> uploadFileToServer(String name,
-                                                     MultipartFile multipartFile) {
+    public String uploadFileToServer(String name,
+                                     MultipartFile multipartFile) {
 
         String myltipatFileName = multipartFile.getOriginalFilename();
 
@@ -50,7 +50,7 @@ public class FileServiceImpl implements FileService {
         int number = 1;
         try {
             if (multipartFile.isEmpty()) {
-//*Ошибка загрузки файла
+            //*Ошибка загрузки файла
                 throw new BadRequestError("Error input data", number);
             }
             Path test = Paths.get(fileWayOfSafeFile);
@@ -60,16 +60,17 @@ public class FileServiceImpl implements FileService {
                     .normalize().toAbsolutePath();
 
             if (Files.exists(test)) {
-                return ResponseEntity.badRequest().body("Файл уже создан");
+                //Добавить логирование
+                throw new InternalServerError("Файл уже создан", number);
             }
             try (InputStream inputStream = multipartFile.getInputStream()) {
                 Files.copy(inputStream, destinationFile,
                         StandardCopyOption.REPLACE_EXISTING);
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
         fileRepository.save(filePlace);
-        return ResponseEntity.ok().build();
+        return "Success upload";
     }
 
     private static String getFileExtension(String mystr) {
@@ -79,7 +80,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> deleteFile(String name) {
+    public String deleteFile(String name) {
         FilePlace filePlace = fileRepository.findByFileName(name);
         if (filePlace == null) {
             int number = 1;
@@ -93,12 +94,13 @@ public class FileServiceImpl implements FileService {
             throw new InternalServerError("Error delete file", number);
         }
         long del = fileRepository.deleteFilePlaceByFileName(name);
-        return ResponseEntity.ok().build();
+        return "Success deleted";
     }
 
     @Override
     @Transactional
-    public ResponseEntity<Resource> downloadFileFromCloud(String name) {
+    public FileDTO downloadFileFromCloud(String name) {
+
         FilePlace filePlace = fileRepository.findByFileName(name);
         if (filePlace == null) {
             int number = 1;
@@ -110,22 +112,20 @@ public class FileServiceImpl implements FileService {
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION,
-                                "attachment; filename=\"" + filePlace.getFileName() + filePlace.getFormatFile() + "\"")
-                        .body(resource);
+                FileDTO fileDTO = new FileDTO(String.valueOf(resource.hashCode()), resource.getContentAsByteArray().toString());
+                return fileDTO;
             } else {
                 int number = 1;
                 throw new InternalServerError("Error upload file", number);
             }
-        } catch (MalformedURLException e) {
+        } catch (IOException ignored) {
         }
-        return ResponseEntity.badRequest().build();
+        return null;
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> editFileName(String name, NewFileName newFileName) {
+    public String editFileName(String name, NewFileName newFileName) {
         FilePlace filePlace = fileRepository.findByFileName(name);
         if (filePlace == null) {
             int number = 1;
@@ -141,18 +141,22 @@ public class FileServiceImpl implements FileService {
         filePlace.setFileName(newFileName.getNewFileName());
         filePlace.setFileWayOf(source.toString());
         fileRepository.save(filePlace);
-        return ResponseEntity.ok().build();
+        return "Success upload";
     }
 
     @Override
-    public ResponseEntity<List<FilePlace>> getAllFiles() {
+    public List<FilePlace> getAllFiles() {
         List<FilePlace> filePlaces = fileRepository.findAll();
         if (filePlaces.isEmpty()) {
             int number = 1;
             throw new BadRequestError("Error input data", number);
         }
-        //throw new InternetServerError("Error upload file", number);
-        return ResponseEntity.ok()
-                .body(filePlaces);
+        for (FilePlace f : filePlaces) {
+            if (Files.notExists(Paths.get(f.getFileWayOf()))) {
+                int number = 1;
+                throw new InternalServerError("Error upload file", number);
+            }
+        }
+        return filePlaces;
     }
 }

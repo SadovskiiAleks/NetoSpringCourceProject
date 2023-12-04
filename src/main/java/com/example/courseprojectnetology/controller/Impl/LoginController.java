@@ -1,6 +1,8 @@
-package com.example.courseprojectnetology.controller;
+package com.example.courseprojectnetology.controller.Impl;
 
+import com.example.courseprojectnetology.dto.LoginAndPasswordDTO;
 import com.example.courseprojectnetology.dto.LoginDTO;
+import com.example.courseprojectnetology.exception.errors.BadRequestError;
 import com.example.courseprojectnetology.models.User;
 import com.example.courseprojectnetology.security.jwtMy.token.JWTTokenProvider;
 import com.example.courseprojectnetology.service.UserService;
@@ -34,30 +36,30 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginDTO loginDTO) {
+    public LoginDTO login(@RequestBody() LoginAndPasswordDTO loginAndPasswordDTO) {
         try {
-            String login = loginDTO.getLogin();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, loginDTO.getPassword()));
+            String login = loginAndPasswordDTO.getLogin();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, loginAndPasswordDTO.getPassword()));
             User user = userService.findByUsername(login);
-
             if (user == null) {
                 throw new UsernameNotFoundException("User with username: " + login + " not found");
             }
-
             String token = jwtTokenProvider.createToken(login, user.getRoles());
-            String authToken = String.format("{\"auth-token\":\"%s\"}", token);
-            return ResponseEntity.ok(authToken);
+            LoginDTO loginDTO = new LoginDTO();
+            loginDTO.setAuthToken(token);
+            return loginDTO;
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username or password");
+
+            int i = 1;
+            throw new BadRequestError("Bad credentials",i);
         }
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(@RequestHeader("auth-token") String authToken) {
+    public String logout(@RequestHeader("auth-token") String authToken) {
 
         //jwtTokenProvider.resolveToken()
-
-        return ResponseEntity.ok().build();
+        return "Success logout";
     }
 
 

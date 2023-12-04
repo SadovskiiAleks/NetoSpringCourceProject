@@ -1,5 +1,6 @@
 package com.example.courseprojectnetology.controller;
 
+import com.example.courseprojectnetology.dto.FileDTO;
 import com.example.courseprojectnetology.models.FilePlace;
 import com.example.courseprojectnetology.models.NewFileName;
 import org.springframework.core.io.Resource;
@@ -14,26 +15,26 @@ import java.util.List;
 public interface FileLoadController {
 
     @PostMapping("/file")
-    ResponseEntity<String> uploadFileToServer(
+    String uploadFileToServer(
             @RequestParam("name") String fileName,
             @RequestPart("content") MultipartFile multipartFile);
 
     @DeleteMapping("/file")
-    ResponseEntity<String> deleteFile(
+    String deleteFile(
             @RequestParam("name") String fileName
     );
 
     @GetMapping("/file")
-    ResponseEntity<Resource> downloadFileFromCloud(
+    FileDTO downloadFileFromCloud(
             @RequestParam("name") String fileName
     );
 
     @PutMapping("/file")
-    ResponseEntity<String> editFileName(
+    String editFileName(
             @RequestParam("name") String fileName,
             @RequestBody NewFileName newFileName
     );
 
     @GetMapping("/list")
-    ResponseEntity<List<FilePlace>> getAllFiles();
+    List<FilePlace> getAllFiles();
 }

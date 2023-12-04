@@ -1,5 +1,6 @@
 package com.example.courseprojectnetology.service;
 
+import com.example.courseprojectnetology.dto.FileDTO;
 import com.example.courseprojectnetology.models.FilePlace;
 import com.example.courseprojectnetology.models.NewFileName;
 import org.springframework.core.io.Resource;
@@ -13,15 +14,15 @@ import java.util.List;
 @Service
 public interface FileService {
 
-    ResponseEntity<String> uploadFileToServer(String fileName,
+    String uploadFileToServer(String fileName,
                                               MultipartFile multipartFile);
 
-    ResponseEntity<String> deleteFile(String name);
+    String deleteFile(String name);
 
-    ResponseEntity<Resource> downloadFileFromCloud(String name);
+    FileDTO downloadFileFromCloud(String name);
 
-    ResponseEntity<String> editFileName(String name, NewFileName newFileName);
+    String editFileName(String name, NewFileName newFileName);
 
-    ResponseEntity<List<FilePlace>> getAllFiles();
+    List<FilePlace> getAllFiles();
 
 }
