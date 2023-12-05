@@ -8,6 +8,7 @@ import com.example.courseprojectnetology.models.NewFileName;
 import com.example.courseprojectnetology.repository.FileRepository;
 import com.example.courseprojectnetology.service.FileService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -24,6 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Service
+@Slf4j
 public class FileServiceImpl implements FileService {
 
     @Value("${my.property.startfileway}")
@@ -47,11 +49,10 @@ public class FileServiceImpl implements FileService {
         filePlace.setFileName(name);
         filePlace.setFormatFile(formatFile);
         filePlace.setFileWayOf(fileWayOfSafeFile);
-        int number = 1;
         try {
             if (multipartFile.isEmpty()) {
             //*Ошибка загрузки файла
-                throw new BadRequestError("Error input data", number);
+                throw new BadRequestError("Error input data", ExceptionSingletonServiceImpl.getInstance().getId());
             }
             Path test = Paths.get(fileWayOfSafeFile);
 
@@ -61,7 +62,7 @@ public class FileServiceImpl implements FileService {
 
             if (Files.exists(test)) {
                 //Добавить логирование
-                throw new InternalServerError("Файл уже создан", number);
+                throw new InternalServerError("File exist ", ExceptionSingletonServiceImpl.getInstance().getId());
             }
             try (InputStream inputStream = multipartFile.getInputStream()) {
                 Files.copy(inputStream, destinationFile,
@@ -70,6 +71,7 @@ public class FileServiceImpl implements FileService {
         } catch (IOException ignored) {
         }
         fileRepository.save(filePlace);
+        log.info("Success upload: " + name);
         return "Success upload";
     }
 
@@ -83,28 +85,25 @@ public class FileServiceImpl implements FileService {
     public String deleteFile(String name) {
         FilePlace filePlace = fileRepository.findByFileName(name);
         if (filePlace == null) {
-            int number = 1;
-            throw new BadRequestError("Error input data", number);
+            throw new BadRequestError("Error input data", ExceptionSingletonServiceImpl.getInstance().getId());
         }
         String fileWay = filePlace.getFileWayOf();
         try {
             Files.delete(Paths.get(fileWay));
         } catch (IOException e) {
-            int number = 1;
-            throw new InternalServerError("Error delete file", number);
+            throw new InternalServerError("Error delete file", ExceptionSingletonServiceImpl.getInstance().getId());
         }
         long del = fileRepository.deleteFilePlaceByFileName(name);
+        log.info("Success deleted:" + name);
         return "Success deleted";
     }
 
     @Override
     @Transactional
     public FileDTO downloadFileFromCloud(String name) {
-
         FilePlace filePlace = fileRepository.findByFileName(name);
         if (filePlace == null) {
-            int number = 1;
-            throw new BadRequestError("Error input data", number);
+            throw new BadRequestError("Error input data", ExceptionSingletonServiceImpl.getInstance().getId());
         }
 
         try {
@@ -113,10 +112,10 @@ public class FileServiceImpl implements FileService {
 
             if (resource.exists() || resource.isReadable()) {
                 FileDTO fileDTO = new FileDTO(String.valueOf(resource.hashCode()), resource.getContentAsByteArray().toString());
+                log.info("Success send:" + name);
                 return fileDTO;
             } else {
-                int number = 1;
-                throw new InternalServerError("Error upload file", number);
+                throw new InternalServerError("Error upload file", ExceptionSingletonServiceImpl.getInstance().getId());
             }
         } catch (IOException ignored) {
         }
@@ -128,19 +127,19 @@ public class FileServiceImpl implements FileService {
     public String editFileName(String name, NewFileName newFileName) {
         FilePlace filePlace = fileRepository.findByFileName(name);
         if (filePlace == null) {
-            int number = 1;
-            throw new BadRequestError("Error input data", number);
+            throw new BadRequestError("Error input data", ExceptionSingletonServiceImpl.getInstance().getId());
         }
         Path source = Paths.get(filePlace.getFileWayOf());
         try {
             Files.move(source, source.resolveSibling(newFileName.getNewFileName() + filePlace.getFormatFile()));
+
         } catch (IOException e) {
-            int number = 1;
-            throw new InternalServerError("Error upload file", number);
+            throw new InternalServerError("Error upload file", ExceptionSingletonServiceImpl.getInstance().getId());
         }
         filePlace.setFileName(newFileName.getNewFileName());
         filePlace.setFileWayOf(source.toString());
         fileRepository.save(filePlace);
+        log.info("Success edit file name. New file name is:" + name);
         return "Success upload";
     }
 
@@ -148,15 +147,14 @@ public class FileServiceImpl implements FileService {
     public List<FilePlace> getAllFiles() {
         List<FilePlace> filePlaces = fileRepository.findAll();
         if (filePlaces.isEmpty()) {
-            int number = 1;
-            throw new BadRequestError("Error input data", number);
+            throw new BadRequestError("Error input data", ExceptionSingletonServiceImpl.getInstance().getId());
         }
         for (FilePlace f : filePlaces) {
             if (Files.notExists(Paths.get(f.getFileWayOf()))) {
-                int number = 1;
-                throw new InternalServerError("Error upload file", number);
+                throw new InternalServerError("Error upload file", ExceptionSingletonServiceImpl.getInstance().getId());
             }
         }
+        log.info("Success set file list");
         return filePlaces;
     }
 }

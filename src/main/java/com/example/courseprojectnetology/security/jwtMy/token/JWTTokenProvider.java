@@ -2,6 +2,7 @@ package com.example.courseprojectnetology.security.jwtMy.token;
 
 import com.example.courseprojectnetology.exception.errors.BadRequestError;
 import com.example.courseprojectnetology.models.Role;
+import com.example.courseprojectnetology.service.Impl.ExceptionSingletonServiceImpl;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -82,6 +83,15 @@ public class JWTTokenProvider {
         return null;
     }
 
+    public String refreshToken(String token) {
+        System.out.println();
+        Date dateExp = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getExpiration();
+        Date dateNow = new Date();
+        Date validity = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getIssuedAt();
+        Claims c = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().setExpiration(validity);
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().toString();
+    }
+
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
@@ -90,9 +100,10 @@ public class JWTTokenProvider {
                 return false;
             }
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            int number = 1;
-            throw new BadRequestError("Bad credentials", number);
+        } catch (JwtException e) {
+            throw new BadRequestError("JwtException", ExceptionSingletonServiceImpl.getInstance().getId());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestError("IllegalArgumentException", ExceptionSingletonServiceImpl.getInstance().getId());
         }
     }
 
