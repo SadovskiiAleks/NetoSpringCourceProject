@@ -31,8 +31,12 @@ public class FileServiceImpl implements FileService {
     @Value("${my.property.startfileway}")
     private String fileWay;
 
+    private final FileRepository fileRepository;
+
     @Autowired
-    private FileRepository fileRepository;
+    public FileServiceImpl(FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
+    }
 
     @Override
     @Transactional
@@ -54,13 +58,13 @@ public class FileServiceImpl implements FileService {
             //*Ошибка загрузки файла
                 throw new BadRequestError("Error input data", ExceptionSingletonServiceImpl.getInstance().getId());
             }
-            Path test = Paths.get(fileWayOfSafeFile);
+            Path nameOfFileWay = Paths.get(fileWayOfSafeFile);
 
-            Path destinationFile = test.resolve(
+            Path destinationFile = nameOfFileWay.resolve(
                             fileWayOfSafeFile)
                     .normalize().toAbsolutePath();
 
-            if (Files.exists(test)) {
+            if (Files.exists(nameOfFileWay)) {
                 //Добавить логирование
                 throw new InternalServerError("File exist ", ExceptionSingletonServiceImpl.getInstance().getId());
             }
