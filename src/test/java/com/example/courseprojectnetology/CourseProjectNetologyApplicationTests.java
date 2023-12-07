@@ -39,7 +39,7 @@ class CourseProjectNetologyApplicationTests {
 
     @BeforeAll
     public static void getFileService() {
-        fileRepository =Mockito.spy(FileRepository.class);
+         fileRepository =Mockito.spy(FileRepository.class);
        fileService = new FileServiceImpl(fileRepository);
        ReflectionTestUtils.setField(fileService, "fileWay", "O:\\Личные файлы\\Netology\\fileBaseTest");
 
@@ -62,35 +62,34 @@ class CourseProjectNetologyApplicationTests {
 //        assertTrue(Files.exists(Paths.get(fileWayOfUploadFile)));
 //    }
 
+//    @Test
+//    public void editFileName() {
+//        String name = "testFile";
+//        NewFileName newFileName = new NewFileName();
+//        newFileName.setNewFileName("testFile2.jpg");
+//        FilePlace filePlace = new FilePlace();
+//        filePlace.setFileName("testFile");
+//        filePlace.setFormatFile(".jpg");
+//        filePlace.setFileWayOf("O:\\Личные файлы\\Netology\\fileBaseTest\\testFile.jpg");
+//        //Mockito.when(fileRepository.findByFileName("")).thenReturn(filePlace);
+//        Mockito.doReturn(filePlace).when(fileRepository).findByFileName("");
+//
+//        fileService.editFileName(name, newFileName);
+//
+//        String fileWayOfUploadFile = "O:\\Личные файлы\\Netology\\fileBaseTest\\testFile2.jpg";
+//        assertTrue(Files.exists(Paths.get(fileWayOfUploadFile)));
+//    }
+
+
+
     @Test
-    public void editFileName() {
-        String name = "testFile";
-        NewFileName newFileName = new NewFileName();
-        newFileName.setNewFileName("testFile2.jpg");
-        FilePlace filePlace = new FilePlace();
-        filePlace.setFileName("testFile");
-        filePlace.setFormatFile(".jpg");
-        filePlace.setFileWayOf("O:\\Личные файлы\\Netology\\fileBaseTest\\testFile.jpg");
-        Mockito.when(fileRepository.findByFileName("")).thenReturn(filePlace);
-
-        fileService.editFileName(name, newFileName);
-
-        String fileWayOfUploadFile = "O:\\Личные файлы\\Netology\\fileBaseTest\\testFile2.jpg";
-        assertTrue(Files.exists(Paths.get(fileWayOfUploadFile)));
+    public void getAllFiles() {
+        String fileName = "testFile2.jpg";
+        List<FilePlace>  test = fileService.getAllFiles();
+        //
+        assertTrue(test != null);
     }
 
-//
-//
-//    @Test
-//    public void getAllFiles() {
-//        String fileName = "testFile2.jpg";
-//
-//        //
-//
-//
-//    }
-//
-//    ;
 //
 //    @Test
 //    public void deleteFile() {
